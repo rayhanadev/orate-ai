@@ -1,0 +1,60 @@
+name: pull-request
+
+on:
+  pull_request:
+
+jobs:
+  setup:
+    name: Set up Environment
+    runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.cache.outputs.cache-hit }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.bun
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: bun install
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Use cached dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.bun
+          key: ${{ needs.setup.outputs.cache-hit }}
+      - name: Check linting
+        run: bun lint
+
+  format:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Use cached dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.bun
+          key: ${{ needs.setup.outputs.cache-hit }}
+      - name: Check formatting
+        run: bun format
