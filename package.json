@@ -8,11 +8,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write . --cache --cache-strategy metadata",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write */**/*.{js,json,ts,tsx,css,md} --cache --cache-strategy metadata",
     "add:ui": "shadcn-ui add",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "prepare": "husky"
   },
   "dependencies": {
     "@lucia-auth/adapter-drizzle": "^1.0.7",
@@ -47,6 +49,9 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
     "eslint-plugin-drizzle": "^0.2.3",
+    "eslint-plugin-import": "^2.29.1",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
     "postcss": "^8",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.5",

@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 
 import LoginForm from "components/LoginForm";
-
 import { validateRequest } from "lib/auth";
 
 import { login } from "./actions";
@@ -18,9 +17,9 @@ export default async function Page() {
   }
 
   return (
-    <div className="flex flex-col items-start justify-start gap-4 w-full">
+    <div className="flex w-full flex-col items-start justify-start gap-4">
       <div className="flex flex-col items-start justify-start gap-2">
-        <h1 className="font-bold text-3xl">Login</h1>
+        <h1 className="text-3xl font-bold">Login</h1>
         <p>Enter your email or username.</p>
       </div>
       <LoginForm action={login} initialState={initialState} />

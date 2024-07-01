@@ -1,15 +1,15 @@
 "use server";
 
-import { hash } from "@node-rs/argon2";
-import { generateIdFromEntropySize } from "lucia";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import type { ActionResult } from "next/dist/server/app-render/types";
+
+import { hash } from "@node-rs/argon2";
+import { generateIdFromEntropySize } from "lucia";
 import { z } from "zod";
 
+import { lucia } from "lib/auth";
 import { db } from "lib/db";
 import { users as usersTable } from "lib/db/schema/users";
-import { lucia } from "lib/auth";
 
 const signupSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -24,9 +24,9 @@ const signupSchema = z.object({
 });
 
 export async function signup(
-  _: any,
+  _: unknown,
   formData: FormData,
-): Promise<ActionResult> {
+): Promise<{ errors: string[] }> {
   const validatedFields = signupSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -34,9 +34,11 @@ export async function signup(
 
   if (!validatedFields.success) {
     const { fieldErrors } = validatedFields.error.flatten();
-    const errors = Object.entries(fieldErrors).map(([_, error]) => {
-      return error;
-    });
+    const errors = Object.entries(fieldErrors)
+      .map(([_, error]) => {
+        return error;
+      })
+      .reduce((acc, val) => acc.concat(val), []);
 
     return {
       errors,

@@ -1,22 +1,25 @@
 "use server";
 
-import { verify } from "@node-rs/argon2";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import type { ActionResult } from "next/dist/server/app-render/types";
+
+import { verify } from "@node-rs/argon2";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
+import { lucia } from "lib/auth";
 import { db } from "lib/db";
 import { users as usersTable } from "lib/db/schema/users";
-import { lucia } from "lib/auth";
-import { eq } from "drizzle-orm";
 
 const loginSchema = z.object({
   email: z.string(),
   password: z.string(),
 });
 
-export async function login(_: any, formData: FormData): Promise<ActionResult> {
+export async function login(
+  _: unknown,
+  formData: FormData,
+): Promise<{ errors: string[] }> {
   const validatedFields = loginSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -24,9 +27,11 @@ export async function login(_: any, formData: FormData): Promise<ActionResult> {
 
   if (!validatedFields.success) {
     const { fieldErrors } = validatedFields.error.flatten();
-    const errors = Object.entries(fieldErrors).map(([_, error]) => {
-      return error;
-    });
+    const errors = Object.entries(fieldErrors)
+      .map(([_, error]) => {
+        return error;
+      })
+      .reduce((acc, val) => acc.concat(val), []);
 
     return {
       errors,

@@ -4,11 +4,12 @@ const config = {
   parserOptions: {
     project: true,
   },
-  plugins: ["@typescript-eslint", "drizzle"],
+  plugins: ["@typescript-eslint", "drizzle", "import"],
   extends: [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
+    "plugin:import/errors",
   ],
   rules: {
     "@typescript-eslint/array-type": "off",
@@ -45,6 +46,47 @@ const config = {
       "error",
       {
         drizzleObjectName: ["db", "ctx.db"],
+      },
+    ],
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
+    "import/order": [
+      "error",
+      {
+        groups: [
+          "builtin",
+          ["external", "type"],
+          "internal",
+          "parent",
+          "sibling",
+          "index",
+          "unknown",
+        ],
+        pathGroups: [
+          {
+            pattern: "react{,-dom,/**}",
+            group: "builtin",
+            position: "after",
+          },
+          {
+            pattern: "next{,/**}",
+            group: "builtin",
+            position: "after",
+          },
+          {
+            pattern: "^(~|assets|components|hooks|lib|styles)(/.*|$)",
+            group: "internal",
+            position: "after",
+          },
+        ],
+        distinctGroup: true,
+        "newlines-between": "always",
+        alphabetize: {
+          order: "asc",
+          caseInsensitive: true,
+        },
+        pathGroupsExcludedImportTypes: ["react", "next"],
       },
     ],
   },

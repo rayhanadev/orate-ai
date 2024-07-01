@@ -1,8 +1,10 @@
-import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
-import { Lucia } from "lucia";
-import type { Session, User } from "lucia";
-import { cookies } from "next/headers";
 import { cache } from "react";
+
+import { cookies } from "next/headers";
+
+import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
+import type { Session, User } from "lucia";
+import { Lucia } from "lucia";
 
 import { env } from "~/env.js";
 
@@ -40,7 +42,7 @@ export const validateRequest = cache(
 
     const result = await lucia.validateSession(sessionId);
     try {
-      if (result.session && result.session.fresh) {
+      if (result.session?.fresh) {
         const sessionCookie = lucia.createSessionCookie(result.session.id);
         cookies().set(
           sessionCookie.name,

@@ -2,7 +2,6 @@
 
 import { useId } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import type { ActionResult } from "next/dist/server/app-render/types";
 
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -12,28 +11,41 @@ export default function LoginForm({
   action,
   initialState,
 }: {
-  action: (_: any, formData: FormData) => Promise<ActionResult>;
-  initialState: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  action: (_: unknown, formData: FormData) => Promise<any>;
+  initialState: {
+    email: string;
+    password: string;
+  };
 }) {
   const emailId = useId();
   const passwordId = useId();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const [state, formAction] = useFormState(action, initialState);
   const { pending } = useFormStatus();
 
   return (
     <>
-      {state.errors && state.errors.length && (
-        <p className="text-destructive">{state.errors[0]}</p>
-      )}
+      {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        state.errors?.length && (
+          <p className="text-destructive">
+            {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              state.errors[0]
+            }
+          </p>
+        )
+      }
       <form
         action={formAction}
-        className="flex flex-col items-start justify-start gap-4 w-full"
+        className="flex w-full flex-col items-start justify-start gap-4"
       >
-        <div className="flex flex-col items-start justify-start gap-2 w-full">
+        <div className="flex w-full flex-col items-start justify-start gap-2">
           <Label htmlFor={emailId}>Email or Username</Label>
           <Input id={emailId} name="email" type="text" required />
         </div>
-        <div className="flex flex-col items-start justify-start gap-2 w-full">
+        <div className="flex w-full flex-col items-start justify-start gap-2">
           <Label htmlFor={passwordId}>Password</Label>
           <Input id={passwordId} name="password" type="password" required />
         </div>
