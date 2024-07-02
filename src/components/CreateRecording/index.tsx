@@ -2,7 +2,6 @@
 
 import { useTransition } from "react";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 

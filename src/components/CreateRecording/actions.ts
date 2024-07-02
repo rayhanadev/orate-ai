@@ -45,7 +45,7 @@ export async function submit(data: CreateRecordingSchemaType) {
 
   const fileId = generateIdFromEntropySize(10);
 
-  const result = await db.insert(lecturesTable).values({
+  await db.insert(lecturesTable).values({
     id: fileId,
     name: data.title,
     duration: 0,
