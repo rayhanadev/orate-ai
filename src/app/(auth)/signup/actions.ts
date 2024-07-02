@@ -56,19 +56,14 @@ export async function signup(
 
   const userId = generateIdFromEntropySize(10);
 
-  console.log({
-    id: userId,
-    email: email,
-    username: `${email.split("@")[0]!.replace(/[^a-zA-Z0-9_-]/g, "")}+${userId}`,
-    password_hash: hash,
-  });
-
   await db.insert(usersTable).values({
     id: userId,
     email: email,
     username:
       `${email.split("@")[0]!.replace(/[^a-zA-Z0-9_-]/g, "")}+${userId}`.toLowerCase(),
     passwordHash: passwordHash,
+    timeCreated: new Date().toISOString(),
+    timeUpdated: new Date().toISOString(),
   });
 
   const session = await lucia.createSession(userId, {});
@@ -79,5 +74,5 @@ export async function signup(
     sessionCookie.attributes,
   );
 
-  return redirect("/onboarding");
+  return redirect("/home");
 }
